@@ -142,34 +142,10 @@ public class Forecast {
 		bottomLine = dataNode.get("bottom_line").asText();
 		dateIssued = dataNode.get("date_issued").asText();
 		
-		mainRoseArray = commaSeperatedStringToIntArray(dataNode.get("overall_danger_rose"));
-		dangerRose1 = commaSeperatedStringToIntArray(dataNode.get("danger_rose_1"));
-		dangerRose2 = commaSeperatedStringToIntArray(dataNode.get("danger_rose_2"));
-		dangerRose3 = commaSeperatedStringToIntArray(dataNode.get("danger_rose_3"));
-	}
-	
-	/**
-	 * This helper method takes in a comma-seperated string and returns an integer array,
-	 * where each index is the integer that is separated by a comma
-	 * 
-	 * @param jsonObject JsonNode-type object that contains the comma-seperated string
-	 * @return integer-type array described above
-	 * @throws IOException if the JsonNode object provided is a string of no length
-	 */
-	private int[] commaSeperatedStringToIntArray(JsonNode jsonObject) throws IOException {
-		String[] stringArray = jsonObject.asText().split(",");
-		
-		if (stringArray.length == 0) {
-			throw new IOException("json Object had no string value, must pass string seperated json Object");
-		}
-		
-		int[] seperatedIntArray = new int[stringArray.length];
-		Scanner scanner;	
-		for (int i = 0; i < stringArray.length; i++) {
-			scanner = new Scanner(stringArray[i]);
-			seperatedIntArray[i] = scanner.nextInt();
-		}
-		return seperatedIntArray;
+		mainRoseArray = DataToStringConversions.commaSeperatedStringToIntArray(dataNode.get("overall_danger_rose"));
+		dangerRose1 = DataToStringConversions.commaSeperatedStringToIntArray(dataNode.get("danger_rose_1"));
+		dangerRose2 = DataToStringConversions.commaSeperatedStringToIntArray(dataNode.get("danger_rose_2"));
+		dangerRose3 = DataToStringConversions.commaSeperatedStringToIntArray(dataNode.get("danger_rose_3"));
 	}
 	
 	/**
