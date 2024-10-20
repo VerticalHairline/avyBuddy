@@ -2,7 +2,6 @@ package uacData;
 
 import java.io.IOException;
 import java.util.Arrays;
-//TODO find out how to save across termination? then make a class that applies the forecast data to the empty route
 
 /**
  * This class creates objects that represent routes in the backcountry. These contain the aspects and elevations of concern,
@@ -11,8 +10,8 @@ import java.util.Arrays;
  * @author Aiden Pickett
  * @version 10/16/24
  */
-public class Route {
-		
+public class Route implements Comparable<Route>{
+
 	//Array of booleans to represent if the position (aspect and elevation) is present in the route
 	private boolean[] routePositions = new boolean[24];
 	
@@ -23,7 +22,7 @@ public class Route {
 	private String name;
 	
 	/**
-	 * Default constructor, for creating hollow Route Objects
+	 * Default constructor, for creating hollow Route Objects. Not to be used by user as it would conflict with compareTo method
 	 * 
 	 * @param region region of where to get avalanche forecast data from
 	 * @param name string name of the Route
@@ -81,9 +80,25 @@ public class Route {
 		
 		//Changes corresponding indices in aspects array to the danger value of the forecast to 
 		//represent that they are a part of the tour
-		for(int num : aspect) {
-			int index = 8*elevation + num;
-			routePositions[index] = true;
+		for (int i = 0; i < routePositions.length; i++) {
+			for(int j = 0; j < aspect.length; j++) {
+				if(i == elevation*8 + aspect[j]) {
+					routePositions[i] = true;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * This function replaces the current array of positions with a new one, mainly for use with the database
+	 * 
+	 * @param newArray new 24 length boolean array to add
+	 */
+	public void addNewRoutePositions(boolean[] newArray) {
+		if (newArray.length == routePositions.length) {
+			routePositions = newArray;
+		} else {
+			throw new IllegalArgumentException("Only boolean arrays of length 24 are valid");
 		}
 	}
 	
@@ -93,7 +108,7 @@ public class Route {
 	 * @return the routePositions array, which is an array of boolean values that represents if the position (aspect and elevation)
 	 * are a part of the route.
 	 */
-	public boolean[] getroutePositions() {
+	public boolean[] getRoutePositions() {
 		return routePositions;
 	}
 	
@@ -159,6 +174,53 @@ public class Route {
 	 * String representation of this Route object
 	 */
 	public String toString() {
-		return "Route: " + getName();
+		String returnString = "Route: " + getName() + " || Region: " + getRegion() + "\nThis route passes through: \n";
+		for (int i = 0; i < routePositions.length; i++) {
+			if(routePositions[i]) {
+				returnString += "- " + DataToStringConversions.getAspectString(i%8) + " " + DataToStringConversions.getElevationString(i/8) + "\n";
+			}
+		}
+		return returnString;
 	}
+
+	@Override
+	/**
+	 * Implements compareTo method from Comparable by comparing average danger of routes
+	 */
+	public int compareTo(Route other) {
+		
+		double thisAverageDanger = averageDanger(this);
+		double otherAverageDanger = averageDanger(other);
+
+		if(thisAverageDanger > otherAverageDanger) {
+			return 1;
+		} else if (thisAverageDanger == otherAverageDanger){
+			return 0;
+		} else {
+			return -1;
+		}
+	}
+	
+	/**
+	 * Private helper method that calculates the average danger of a Route object
+	 * 
+	 * @param route Route object to calculate average danger of
+	 * @return double type value which represents the average danger
+	 */
+	private double averageDanger(Route route) {
+		
+		double routeTotalDanger = 0.0;
+		double numberOfPositions = 0.0;
+		int[] routeOverallDanger = route.getOverallDangerPositionsForRoute();
+		
+		for (int num : routeOverallDanger) {
+			if (num != 0) {
+				routeTotalDanger += (double) num;
+				numberOfPositions++;
+			}
+		}
+		
+		return routeTotalDanger / numberOfPositions;
+	}
+	
 }

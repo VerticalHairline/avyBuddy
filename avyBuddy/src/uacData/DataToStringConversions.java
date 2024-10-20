@@ -1,15 +1,21 @@
 package uacData;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.Scanner;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
- * This class merely helps to convert the data found in Forecast and Route to readable data
+ * This class merely helps to convert the data found in Forecast and Route to readable Strings.
  * 
+ * Also contains the SQL connection string for the database because this felt like the right place
+ * to put it
  * @author Aiden Pickett
  * @version 10/16/24
  */
 public class DataToStringConversions {
-	
+		
 	//Hash map that takes an integer as a key and gives the appropriate aspect value as a string
 	final private static HashMap <Integer, String> roseAspectConversions = new HashMap<>() {
 		private static final long serialVersionUID = 1L;
@@ -53,6 +59,60 @@ public class DataToStringConversions {
 		put(9, "High danger with pockets of extreme danger");
 		put(10, "Extreme danger");
 	}};
+	
+	
+	/**
+	 * This method takes in a comma-seperated string and returns an integer array,
+	 * where each index is the integer that is separated by a comma
+	 * 
+	 * @param jsonObject JsonNode-type object that contains the comma-seperated string
+	 * @return integer-type array described above
+	 * @throws IOException if the JsonNode object provided is a string of no length
+	 */
+	public static int[] commaSeperatedStringToIntArray(JsonNode jsonObject) throws IOException {
+		String[] stringArray = jsonObject.asText().split(",");
+		
+		if (stringArray.length == 0) {
+			throw new IOException("json Object had no string value, must pass string seperated json Object");
+		}
+		
+		int[] seperatedIntArray = new int[stringArray.length];
+		Scanner scanner = null;	
+		for (int i = 0; i < stringArray.length; i++) {
+			scanner = new Scanner(stringArray[i]);
+			seperatedIntArray[i] = scanner.nextInt();
+		}
+		scanner.close();
+		return seperatedIntArray;
+	}
+	
+	/**
+	 * This method does the same thing as commaSeperatedStringToIntArray, but instead of converting to an
+	 * int array it converts to a boolean array where if the int is >= 1 it puts true for that index and
+	 * 0 if else. It also takes a string as an input instead (for use by the database)
+	 * 
+	 * @param commaSeperatedString string to be converted to
+	 * @return seperatedBooleanArray as described above, to be used for creating route objects from 
+	 * saved database states
+	 */
+	static boolean[] commaSeperatedStringToBooleanArray(String commaSeperatedString) {
+		
+		String[] stringArray = commaSeperatedString.split(",");
+		boolean[] seperatedBooleanArray = new boolean[stringArray.length];
+		
+		Scanner scanner = null;
+		for (int i = 0; i < stringArray.length; i++) {
+			scanner = new Scanner(stringArray[i]);
+			int nextInt = scanner.nextInt();
+			if(nextInt == 1) {
+				seperatedBooleanArray[i] = true;
+			} else {
+				seperatedBooleanArray[i] = false;
+			}
+		}
+		scanner.close();
+		return seperatedBooleanArray;
+	}
 	
 	/**
 	 * This method returns the textual representation of the index of an aspect as a string
