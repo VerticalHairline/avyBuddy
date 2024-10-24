@@ -1,0 +1,87 @@
+html{
+    font-family: "Arvo";
+    word-spacing: 0.12em;
+}
+
+.main-header-wrap{
+    display: flex;
+    justify-content: space-between;
+    height: 90px;
+    position: relative;
+    background-color: #030f21;
+    width: 100vw;
+    margin: 0;
+    h1{
+        margin-top: 0px;
+    }
+    .logo{
+        height: inherit;
+    }
+    .open-menu-button{
+        height: inherit;
+        padding-right: 20px;
+    }
+}
+
+body{
+    margin: 0px;
+    background-color: #bbd2e9;
+}
+
+.main-body-wrap{
+    margin: 1.5em;
+    h4{
+        font-weight: lighter;
+        text-align: center;
+    }
+    hr{
+        height: 6px;
+        background-color: black;
+        border-style: none;
+    }
+}
+
+.home-screen-image-wrap{
+    width: 120vw;
+    right: 20vw;
+    position: relative;
+    z-index: -1;
+}
+
+.home-screen-image{
+    width: inherit;
+}
+
+.call-to-action{
+    font-size: 200%;
+    background-color: #030f21;
+    position: relative;
+    bottom: -1em;
+    padding: .5em;
+    color: #fffff0;
+    font-family: inherit;
+    border-style: none;
+    text-decoration: none;
+    border-radius: 10% 10% 30%;
+    z-index: 999;
+    margin-top: 100px;
+}
+
+.description-section{
+    height: 1000px;
+    h2{
+        text-align: center;
+        padding-top: 50%;
+    }
+}
+
+.main-footer-wrap{
+    height: 120px;
+    color: 	#65737e;
+    background-color: #030f21;
+    text-align: center;
+    h4{
+        font-weight: lighter;
+        padding-top: 10px;
+    }
+}
